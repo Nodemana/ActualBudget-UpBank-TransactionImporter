@@ -35,9 +35,9 @@ These instructions, while long, are written to hopefully be as painless as possi
     `nvm -v`
 This should print the installed nvm version.
 
-#### 4. Install Node.js version 18.4.1:
-- Use the following command to install Node.js version 18.4.1:
-  `nvm install 18.4.1`
+#### 4. Install Node.js version 18.14.1:
+- Use the following command to install Node.js version 18.14.1:
+  `nvm install 18.14.1`
 
 #### 5. Verify Node.js installation:
 - Run the following commands to verify the installed Node.js version and npm version:
@@ -45,7 +45,7 @@ This should print the installed nvm version.
 node -v
 npm -v
 ```
-These should print v18.4.1 for Node.js and the corresponding npm version.
+These should print v18.14.1 for Node.js and the corresponding npm version.
 
 #### 6. Install Project Dependencies:
 Navigate to the cloned repository directory using the cd command in your terminal. Then, run the following command to install the project's dependencies:
