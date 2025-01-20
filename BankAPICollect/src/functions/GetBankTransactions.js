@@ -61,7 +61,7 @@ async function fetchTransactionsForAccount(accountId, accessToken) {
                     'Authorization': `Bearer ${accessToken}`
                 },
                 params: {
-                    'page[size]': 10  // Adjust size as needed
+                    'page[size]': 100  // Adjust size as needed
                 }
             });
 
