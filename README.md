@@ -30,24 +30,24 @@ If you’re an **[Up Bank](https://up.com.au/)** user who loves **[Actual Budget
 
 This tool solves those problems by automating everything. No more spreadsheets!
 
-### Quickstart (Docker Recommended)
+## Quickstart (Docker Recommended)
 
-#### 1. Pull Docker Image
+### 1. Pull Docker Image
 The docker image is hosted on docker hub: https://hub.docker.com/r/nodemana/actualbudgetupimporter/tags.
 
 `docker pull nodemana/actualbudgetupimporter:latest`
 
-#### 2. Obtain Up Bank API Key:
+### 2. Obtain Up Bank API Key:
 - Log in to your Up Bank online banking portal.
 - Navigate to the developer section (may vary depending on Up Bank's interface).
 - Generate a new API key and copy it for later use.
 
-#### 3. Obtain Actual Budget Credentials:
+### 3. Obtain Actual Budget Credentials:
 - Log in to your Actual Budget account.
 - Top left click your budget -> Settings -> Advanced Settings -> Then record your Sync ID.
 - Locate your Actual Budget Account IDs. (These are IDs for each of your individual on or off budget accounts).
 
-#### 4. Set up your `.env` File
+### 4. Set up your `.env` File
 ```# .env
 ACTUAL_BUDGET_ID="your_sync_id"
 ACTUAL_BUDGET_PASSWORD="your_password"
@@ -55,7 +55,7 @@ UP_BANK_ACCESS_TOKEN="your_up_api_key"
 ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
 ```
 
-#### 5. Run the container to get your accound ID's
+### 5. Run the container to get your accound ID's
 Now we need to run the docker image so that we can extract our account id's.
 `docker run --env-file .env nodemana/actualbudgetupimporter:latest`
 if you are running actual budget server on your local machine then you will need to pass --network="host"
@@ -63,7 +63,7 @@ So you would run:
 `docker run --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
 **(This will fail but print your Up/Actual Budget account IDs – copy these)**
 
-#### 5. Update `.env` with account mappings:
+### 5. Update `.env` with account mappings:
 Record these in your .env files like so:
 ```
 # left is up id, right is actual budget id
@@ -82,7 +82,7 @@ Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up
 
 This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on. You can add as many mappings as you'd like.
 
-#### 6. Run the final container
+### 6. Run the final container
 Now we have all the variables we need, we can now run the docker container in the background:
 
 `docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
@@ -94,6 +94,16 @@ Now we have all the variables we need, we can now run the docker container in th
 - [Open an Issue](https://github.com/Nodemana/ActualBudget-UpBank-TransactionImporter/issues)
 
 ✨ **Star this repo** if it saved you time!
+
+## Contributing
+
+1. Fork the repo
+2. Create a feature branch: `git checkout -b feat/awesome-feature`
+3. Commit changes: `git commit -m 'feat: add awesome feature'`
+4. Push: `git push origin feat/awesome-feature`
+5. Open a PR!
+
+First time contributing? Check out [good first issues](https://github.com/Nodemana/ActualBudget-UpBank-TransactionImporter/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
 
 <details>
 <summary>Source Code Installation Steps</summary>
