@@ -1,37 +1,44 @@
-# Up Bank Transaction Importer For [Actual Budget](https://github.com/actualbudget/actual-server)
 
 This project aims to improve the automation of [Actual Budget](https://github.com/actualbudget/actual-server) by allowing you to connect your [Up Bank](https://up.com.au/) accounts to your budget and have automatic transaction imports.
 Up bank has a beautiful [API]((https://developer.up.com.au/)) which allows you to take your finances and manipulate it with code. This encouraged me to switch banks as shockingly no other Australian bank supplies an API for personal use.
 
-## Getting Started
-These instructions, while long, are written to hopefully be as painless as possible. Even if you're new to coding, you should be able to follow these steps.
+# Up Bank → [Actual Budget](https://github.com/actualbudget/actual-server) Importer
 
-### Prerequisites:
-- Git installed.
-- (Recommended) Docker installed.
-- An Up Bank account.
-- Actual Budget installed either locally or hosted.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nodemana/actualbudgetupimporter)](https://hub.docker.com/r/nodemana/actualbudgetupimporter)
+[![Open Issues](https://img.shields.io/github/issues/Nodemana/ActualBudget-UpBank-TransactionImporter)](https://github.com/Nodemana/ActualBudget-UpBank-TransactionImporter/issues)
 
-### Docker
+**Automatically sync your Up Bank transactions with Actual Budget** – no manual CSV exports needed!  
 
-Application can now be successfully containerised into an image with the given docker file. Also when the container is run it will first print out your Up bank account ids and your Actual Budget account ids so that you can update your .env file with the account mappings you desire.
+🚀 **Key Features**:
+- **One-Time Setup**: Map accounts once, sync forever.
+- **Hourly Updates**: Transactions sync every hour via Docker.
+- **Self-Hosted & Private**: Your data stays on your machine.
+- **Free & Open Source**: No subscriptions, no tracking.
 
-Keep in mind if you are running your actual budget server on your local machine on localhost then you will need to pass some arguments to your docker run command. This is detailed this below.
+Built for Up Bank users who love Actual Budget but hate manual imports.
 
-To build the docker image and run the container do the following:
-docker build -t up-bank-importer .
-Then once the image has been successfully created:
-docker run -it --name up-importer --env-file .env up-bank-importer
-if you are running actual budget server on your local machine then you will need to pass --network="host"
-So you would run:
-docker run -it --name up-importer --env-file .env --network="host" up-bank-importer
+## Roadmap
 
-### Docker Steps (Recommended):
+- [x] **Docker**: Containerised setup.
+- [ ] **Web UI**: Browser-based setup for non-technical users.
+- [ ] **Settings**: Allow users to easily change settings like sync frequency.
+- [ ] **Stock Portfolio Import**: Automatic imports of your stock portfolio as an off-budget account.
+
+## Why Use This?
+
+If you’re an **[Up Bank](https://up.com.au/)** user who loves **[Actual Budget](https://github.com/actualbudget/actual-server)**, you’ve probably:
+- Wasted time manually exporting CSV files
+- Forgotten to sync transactions for weeks
+- Felt frustrated by Actual Budget’s lack of direct integration
+
+This tool solves those problems by automating everything. No more spreadsheets!
+
+### Quickstart (Docker Recommended)
 
 #### 1. Pull Docker Image
-
 The docker image is hosted on docker hub: https://hub.docker.com/r/nodemana/actualbudgetupimporter/tags.
-Pull down the image with:
+
 `docker pull nodemana/actualbudgetupimporter:latest`
 
 #### 2. Obtain Up Bank API Key:
@@ -44,32 +51,30 @@ Pull down the image with:
 - Top left click your budget -> Settings -> Advanced Settings -> Then record your Sync ID.
 - Locate your Actual Budget Account IDs. (These are IDs for each of your individual on or off budget accounts).
 
-#### 4. Create .env File
-Now create a .env file where you will run your docker container and put in your Sync ID, actual budget password and up access token.
-```
-ACTUAL_BUDGET_ID= # Sync ID
-ACTUAL_BUDGET_PASSWORD= 
-ACTUAL_BUDGET_SERVER_URL=   # http://localhost:5006
-UP_BANK_ACCESS_TOKEN=  # UP API Token
+#### 4. Set up your `.env` File
+```# .env
+ACTUAL_BUDGET_ID="your_sync_id"
+ACTUAL_BUDGET_PASSWORD="your_password"
+UP_BANK_ACCESS_TOKEN="your_up_api_key"
+ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
 ```
 
-#### 4. Run Docker Image
+#### 5. Run the container to get your accound ID's
 Now we need to run the docker image so that we can extract our account id's.
 `docker run --env-file .env nodemana/actualbudgetupimporter:latest`
 if you are running actual budget server on your local machine then you will need to pass --network="host"
 So you would run:
-docker run --env-file .env --network="host" nodemana/actualbudgetupimporter:latest
+`docker run --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
+**(This will fail but print your Up/Actual Budget account IDs – copy these)**
 
-**NOTE:** It should fail after printing out your account ID's, this is because we have not yet provided account mappings.
-
-#### 5. Record Account IDs
-You will see the container run and then fail. But before it fails it will print out your Up bank account ID's and then your actual budget account ID's. Record these in your .env files like so:
-
+#### 5. Update `.env` with account mappings:
+Record these in your .env files like so:
 ```
 # left is up id, right is actual budget id
 UP_ACCOUNT_MAPPING={"up_account1": "actual_budget_account1","up_account2": "actual_budget_account1"}
 ```
-**Important**: Never commit this file to your version control system (e.g., GitHub) as it contains sensitive information.
+⚠️ **Security Note**:  
+Never commit your `.env` file or share API keys. Up Bank tokens have full read access to your transactions!
 
 Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up Bank accounts to the correct accounts in Actual Budget. You need to replace the placeholder IDs with your actual IDs. For example:
 ```
@@ -81,14 +86,21 @@ Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up
 
 This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on. You can add as many mappings as you'd like.
 
-#### 6. Re-run Docker Container
+#### 6. Run the final container
 Now we have all the variables we need, we can now run the docker container in the background:
 
 `docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
 
-Now your actual budget should sync with your up bank accounts every hour.
+**Done!** Transaction sync hourly. 
 
-### Source Code Steps:
+## Need Help? Found a Bug?
+
+- [Open an Issue](https://github.com/Nodemana/ActualBudget-UpBank-TransactionImporter/issues)
+
+✨ **Star this repo** if it saved you time!
+
+<details>
+<summary>Source Code Installation Steps</summary>
 
 #### 1. Clone the Repository:
 - Open a terminal window (Command Prompt on Windows, Terminal on Mac/Linux). You can use a free online terminal emulator if you don't have one installed.
@@ -162,16 +174,6 @@ export UP_BANK_ACCESS_TOKEN=
 ```
 **Important**: Never commit this file to your version control system (e.g., GitHub) as it contains sensitive information.
 
-Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up Bank accounts to the correct accounts in Actual Budget. You need to replace the placeholder IDs with your actual IDs. For example:
-```
-{
-  "12345678-abcd-efgh-ijkl-1234567890ab": "98765432-zyxw-vuts-rqpo-0987654321dc",
-  "98765432-zyxw-vuts-rqpo-0987654321dc": "56789012-lkjh-gfed-cba9-2109876543fe"
-}
-```
-
-This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on.
-
 #### 10. Running the Script (Simplified Method):
 
 Option 1: Manual Execution
@@ -200,3 +202,6 @@ Explanation of the Cron Expression:
 - *: Day of the week (0-6, Sunday is 0)
 
 This setup will run the script every day at 3:00 AM.
+
+</details>
+
