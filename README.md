@@ -7,20 +7,97 @@ Up bank has a beautiful [API]((https://developer.up.com.au/)) which allows you t
 These instructions, while long, are written to hopefully be as painless as possible. Even if you're new to coding, you should be able to follow these steps.
 
 ### Prerequisites:
-- A computer with an internet connection.
 - Git installed.
+- (Recommended) Docker installed.
 - An Up Bank account.
 - Actual Budget installed either locally or hosted.
 
-### Steps:
+### Docker
+
+Application can now be successfully containerised into an image with the given docker file. Also when the container is run it will first print out your Up bank account ids and your Actual Budget account ids so that you can update your .env file with the account mappings you desire.
+
+Keep in mind if you are running your actual budget server on your local machine on localhost then you will need to pass some arguments to your docker run command. This is detailed this below.
+
+To build the docker image and run the container do the following:
+docker build -t up-bank-importer .
+Then once the image has been successfully created:
+docker run -it --name up-importer --env-file .env up-bank-importer
+if you are running actual budget server on your local machine then you will need to pass --network="host"
+So you would run:
+docker run -it --name up-importer --env-file .env --network="host" up-bank-importer
+
+### Docker Steps (Recommended):
+
+#### 1. Pull Docker Image
+
+The docker image is hosted on docker hub: https://hub.docker.com/r/nodemana/actualbudgetupimporter/tags.
+Pull down the image with:
+`docker pull nodemana/actualbudgetupimporter:latest`
+
+#### 2. Obtain Up Bank API Key:
+- Log in to your Up Bank online banking portal.
+- Navigate to the developer section (may vary depending on Up Bank's interface).
+- Generate a new API key and copy it for later use.
+
+#### 3. Obtain Actual Budget Credentials:
+- Log in to your Actual Budget account.
+- Top left click your budget -> Settings -> Advanced Settings -> Then record your Sync ID.
+- Locate your Actual Budget Account IDs. (These are IDs for each of your individual on or off budget accounts).
+
+#### 4. Create .env File
+Now create a .env file where you will run your docker container and put in your Sync ID, actual budget password and up access token.
+```
+ACTUAL_BUDGET_ID= # Sync ID
+ACTUAL_BUDGET_PASSWORD= 
+ACTUAL_BUDGET_SERVER_URL=   # http://localhost:5006
+UP_BANK_ACCESS_TOKEN=  # UP API Token
+```
+
+#### 4. Run Docker Image
+Now we need to run the docker image so that we can extract our account id's.
+`docker run --env-file .env nodemana/actualbudgetupimporter:latest`
+if you are running actual budget server on your local machine then you will need to pass --network="host"
+So you would run:
+docker run --env-file .env --network="host" nodemana/actualbudgetupimporter:latest
+
+**NOTE:** It should fail after printing out your account ID's, this is because we have not yet provided account mappings.
+
+#### 5. Record Account IDs
+You will see the container run and then fail. But before it fails it will print out your Up bank account ID's and then your actual budget account ID's. Record these in your .env files like so:
+
+```
+# left is up id, right is actual budget id
+UP_ACCOUNT_MAPPING={"up_account1": "actual_budget_account1","up_account2": "actual_budget_account1"}
+```
+**Important**: Never commit this file to your version control system (e.g., GitHub) as it contains sensitive information.
+
+Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up Bank accounts to the correct accounts in Actual Budget. You need to replace the placeholder IDs with your actual IDs. For example:
+```
+{
+  "12345678-abcd-efgh-ijkl-1234567890ab": "98765432-zyxw-vuts-rqpo-0987654321dc",
+  "98765432-zyxw-vuts-rqpo-0987654321dc": "56789012-lkjh-gfed-cba9-2109876543fe"
+}
+```
+
+This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on. You can add as many mappings as you'd like.
+
+#### 6. Re-run Docker Container
+Now we have all the variables we need, we can now run the docker container in the background:
+
+`docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
+
+Now your actual budget should sync with your up bank accounts every hour.
+
+### Source Code Steps:
 
 #### 1. Clone the Repository:
 - Open a terminal window (Command Prompt on Windows, Terminal on Mac/Linux). You can use a free online terminal emulator if you don't have one installed.
 - Navigate to the directory where you want to download the project files. Then, run the following command to clone the repository:
 
-```https://github.com/YOUR_USERNAME/ActualBudget-UpBank-TransactionImporter.git```
+```git clone https://github.com/YOUR_USERNAME/ActualBudget-UpBank-TransactionImporter.git```
 
 - Replace YOUR_USERNAME with your GitHub username.
+
 #### 2. Install nvm:
   - Open a terminal window.
   - Run the following command to download and install the nvm script: **NOTE You will need a WSL terminal if on Windows.**
