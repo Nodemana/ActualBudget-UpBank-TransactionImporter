@@ -49,36 +49,38 @@ async function getBudgetAccounts() {
 //                          All Transactions For Accounts
 //=============================================================================
 
+
 async function fetchTransactionsForAccount(accountId, accessToken) {
-    let allTransactions = [];
-    let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
+  let allTransactions = [];
+  let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
 
-    try {
-        while (nextPageUrl) {
-            const transactionsResponse = await axios.get(nextPageUrl, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                params: {
-                    'page[size]': 1000  // Adjust size as needed
-                }
-            });
-
-            // Add current page's transactions to the array
-            allTransactions = [...allTransactions, ...transactionsResponse.data.data];
-
-            // Update nextPageUrl based on the links in the response
-            nextPageUrl = transactionsResponse.data.links.next || null;
-
-            console.log(`Fetched ${allTransactions.length} transactions so far`);
+  try {
+    while (nextPageUrl) {
+      const transactionsResponse = await axios.get(nextPageUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        params: {
+          'page[size]': 100  // Adjust size as needed
         }
+      });
 
-        return allTransactions;
-    } catch (error) {
-        console.error(`Error fetching transactions for account ${accountId}:`, error.response?.data || error.message);
-        throw new Error(`Error fetching transactions for account ${accountId}: ${error.message}`);
+      // Add current page's transactions to the array
+      allTransactions = [...allTransactions, ...transactionsResponse.data.data];
+
+      // Update nextPageUrl based on the links in the response
+      nextPageUrl = transactionsResponse.data.links.next || null;
+
+      console.log(`Fetched ${allTransactions.length} transactions so far`);
     }
+
+    return allTransactions;
+  } catch (error) {
+    console.error(`Error fetching transactions for account ${accountId}:`, error.response?.data || error.message);
+    throw new Error(`Error fetching transactions for account ${accountId}: ${error.message}`);
+  }
 }
+
 
 async function fetchAllTransactions(connection) {
     try {
@@ -209,8 +211,7 @@ async function fetchDateRangeTransactionsForAccount(accountId, accessToken, sinc
                     'Authorization': `Bearer ${accessToken}`
                 },
                 params: {
-                    'page[size]': 100,  // Increased page size
-                    'filter[since]': since  // Add date filter
+                    'page[size]': 100  // Increased page size
                 }
             });
 
