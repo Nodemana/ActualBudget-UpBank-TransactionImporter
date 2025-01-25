@@ -11,7 +11,6 @@ const api = require('@actual-app/api');
 
 async function AuthenticateUp() {
     const accessToken = process.env.UP_BANK_ACCESS_TOKEN;
-    console.log(accessToken);
     try {
         const accountsResponse = await axios.get('https://api.up.com.au/api/v1/accounts', {
             headers: {
@@ -50,36 +49,38 @@ async function getBudgetAccounts() {
 //                          All Transactions For Accounts
 //=============================================================================
 
+
 async function fetchTransactionsForAccount(accountId, accessToken) {
-    let allTransactions = [];
-    let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
+  let allTransactions = [];
+  let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
 
-    try {
-        while (nextPageUrl) {
-            const transactionsResponse = await axios.get(nextPageUrl, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                params: {
-                    'page[size]': 100  // Adjust size as needed
-                }
-            });
-
-            // Add current page's transactions to the array
-            allTransactions = [...allTransactions, ...transactionsResponse.data.data];
-
-            // Update nextPageUrl based on the links in the response
-            nextPageUrl = transactionsResponse.data.links.next || null;
-
-            console.log(`Fetched ${allTransactions.length} transactions so far`);
+  try {
+    while (nextPageUrl) {
+      const transactionsResponse = await axios.get(nextPageUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        params: {
+          'page[size]': 100  // Adjust size as needed
         }
+      });
 
-        return allTransactions;
-    } catch (error) {
-        console.error(`Error fetching transactions for account ${accountId}:`, error.response?.data || error.message);
-        throw new Error(`Error fetching transactions for account ${accountId}: ${error.message}`);
+      // Add current page's transactions to the array
+      allTransactions = [...allTransactions, ...transactionsResponse.data.data];
+
+      // Update nextPageUrl based on the links in the response
+      nextPageUrl = transactionsResponse.data.links.next || null;
+
+      console.log(`Fetched ${allTransactions.length} transactions so far`);
     }
+
+    return allTransactions;
+  } catch (error) {
+    console.error(`Error fetching transactions for account ${accountId}:`, error.response?.data || error.message);
+    throw new Error(`Error fetching transactions for account ${accountId}: ${error.message}`);
+  }
 }
+
 
 async function fetchAllTransactions(connection) {
     try {
@@ -88,7 +89,7 @@ async function fetchAllTransactions(connection) {
         let allTransactions = [];
 
         for (const account of accounts) {
-            console.log(`Fetching transactions for account: ${account.attributes.displayName}`);
+            //console.log(`Fetching transactions for account: ${account.attributes.displayName}`);
             const transactions = await fetchTransactionsForAccount(account.id, accessToken);
             allTransactions = [...allTransactions, ...transactions];
         }
@@ -122,7 +123,7 @@ async function uploadTransactions(accounts) {
             const upAccountId = account.id;
             const upAccountName = account.attributes.displayName;
 
-            console.log(`Processing transactions for account: ${upAccountName}`);
+            //console.log(`Processing transactions for account: ${upAccountName}`);
 
             // 1. Check for explicit mapping in environment variable
             let actualBudgetAccountId = accountMapping[upAccountId];
@@ -177,7 +178,6 @@ async function uploadTransactions(accounts) {
             // Import transactions for this account
             if (formattedTransactions.length > 0) {
                 try {
-                    console.log(JSON.stringify(formattedTransactions));
                     const result = await api.importTransactions(actualBudgetAccountId, formattedTransactions);
                     console.log(`Uploaded ${formattedTransactions.length} transactions for ${upAccountName}`);
                 } catch (importError) {
@@ -211,8 +211,7 @@ async function fetchDateRangeTransactionsForAccount(accountId, accessToken, sinc
                     'Authorization': `Bearer ${accessToken}`
                 },
                 params: {
-                    'page[size]': 100,  // Increased page size
-                    'filter[since]': since  // Add date filter
+                    'page[size]': 100  // Increased page size
                 }
             });
 
@@ -222,7 +221,7 @@ async function fetchDateRangeTransactionsForAccount(accountId, accessToken, sinc
             // Update nextPageUrl based on the links in the response
             nextPageUrl = transactionsResponse.data.links.next || null;
 
-            console.log(`Fetched ${allTransactions.length} transactions so far for account ${accountId}`);
+            //console.log(`Fetched ${allTransactions.length} transactions so far for account ${accountId}`);
         }
 
         return allTransactions;
@@ -238,11 +237,11 @@ async function fetchTransactionsForPastWeek(connection) {
         const accounts = connection.data.data;
         let allTransactions = [];
 
-        // Calculate the date for past 24 hours
+        // Calculate the date for past one week
         const OneWeekAgo = new Date(Date.now() - 24 * 7 * 60 * 60 * 1000).toISOString();
 
         for (const account of accounts) {
-            console.log(`Fetching transactions for account: ${account.attributes.displayName}`);
+            //console.log(`Fetching transactions for account: ${account.attributes.displayName}`);
 
             try {
                 const transactions = await fetchDateRangeTransactionsForAccount(
@@ -259,11 +258,11 @@ async function fetchTransactionsForPastWeek(connection) {
             }
         }
 
-        console.log(`Total transactions fetched in past 24 hours: ${allTransactions.length}`);
+        //console.log(`Total transactions fetched in past week: ${allTransactions.length}`);
         return allTransactions;
     } catch (error) {
-        console.error('Error fetching transactions for past day:', error);
-        throw new Error('Error fetching transactions for past day: ' + error.message);
+        console.error('Error fetching transactions for past week:', error);
+        throw new Error('Error fetching transactions for past week: ' + error.message);
     }
 }
 
@@ -302,7 +301,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
             const upAccountName = accountData.accountName;
             const transactions = accountData.transactions;
 
-            console.log(`Processing weekly transactions for account: ${upAccountName}`);
+            //console.log(`Processing weekly transactions for account: ${upAccountName}`);
 
             // 1. Check for explicit mapping in environment variable
             let actualBudgetAccountId = accountMapping[upAccountId];
@@ -325,8 +324,8 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                 continue; // Skip this account
             }
 
-            const formattedTransactions = transactions.map(transaction => {
-              const roundUpAmount = transaction.attributes.roundUp ? spendingTransaction.attributes.roundUp.amount.value : 0;
+            const formattedTransactions = transactions.flatMap(transaction => { // Use flatMap
+              const roundUpAmount = transaction.attributes.roundUp ? transaction.attributes.roundUp.amount.value : 0;
 
               const formattedTransaction = {
                 account: actualBudgetAccountId,
@@ -336,19 +335,15 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
               };
 
               if (roundUpAmount !== 0) {
-                // Create an additional transaction for the round-up
                 const roundUpTransaction = {
-                  account: actualBudgetAccountId,
-                  date: formattedTransaction.date, // Use the same date as the spending transaction
-                  amount: Math.abs(roundUpAmount) * 100, // Positive amount in the Savings account
+                  account: actualBudgetAccountId, //Round up destination account
+                  date: formattedTransaction.date,
+                  amount: -Math.round(Math.abs(roundUpAmount) * 100),
                   payee_name: "Round Up Transfer",
                 };
-                console.log(roundUpTransaction);
-                // Return an array containing both transactions
-                return [formattedTransaction, roundUpTransaction];
+                return [formattedTransaction, roundUpTransaction]; // Return an array
               } else {
-                // Return the original formatted transaction if no round-up
-                return formattedTransaction;
+                return [formattedTransaction]; // Return an array with a single item
               }
             });
 
@@ -356,7 +351,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
             if (formattedTransactions.length > 0) {
                 try {
                     const result = await api.importTransactions(actualBudgetAccountId, formattedTransactions);
-                    console.log(`Uploaded ${formattedTransactions.length} weekly transactions for ${upAccountName}`);
+                    //console.log(`Uploaded ${formattedTransactions.length} weekly transactions for ${upAccountName}`);
                 } catch (importError) {
                     console.error(`Error importing weekly transactions for ${upAccountName}:`, importError);
                 }
