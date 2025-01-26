@@ -4,6 +4,7 @@ export ACTUAL_BUDGET_ID=
 export ACTUAL_BUDGET_PASSWORD=
 export ACTUAL_BUDGET_SERVER_URL=    # http://localhost:5006
 export ACTUAL_BUDGET_UP_ACCOUNT_ID=
+export ACTUAL_BUDGET_ENCRYPTION_PASSWORD=
 
 # left is up id, right is actual budget id
 export UP_ACCOUNT_MAPPING='{
