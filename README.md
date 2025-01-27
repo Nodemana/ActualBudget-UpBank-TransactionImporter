@@ -59,10 +59,14 @@ UP_BANK_SYNC_START="your_sync_start_date" # Date & time in rfc-3339 format YYYY-
 
 ### 5. Run the container to get your accound ID's
 Now we need to run the docker image so that we can extract our account id's.
+
 `docker run --env-file .env nodemana/actualbudgetupimporter:latest`
+
 if you are running actual budget server on your local machine then you will need to pass --network="host"
 So you would run:
+
 `docker run --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
+
 **(This will fail but print your Up/Actual Budget account IDs – copy these)**
 
 ### 5. Update `.env` with account mappings:
