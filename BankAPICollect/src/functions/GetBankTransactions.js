@@ -60,6 +60,12 @@ async function getBudgetAccounts() {
 async function fetchTransactionsForAccount(accountId, accessToken) {
   let allTransactions = [];
   let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
+  
+  let syncStart = process.env.UP_BANK_SYNC_START;
+  // Check if syncStart is set
+  if (typeof syncStart === 'undefined' || syncStart == ""){
+    syncStart = "2015-01-01T00:00:00Z" // Start date that will cover all transactions
+  }
 
   try {
     while (nextPageUrl) {
@@ -68,7 +74,8 @@ async function fetchTransactionsForAccount(accountId, accessToken) {
           'Authorization': `Bearer ${accessToken}`
         },
         params: {
-          'page[size]': 100  // Adjust size as needed
+          'page[size]': 100,  // Adjust size as needed
+          'filter[since]': syncStart  // Date filter
         }
       });
 
@@ -227,7 +234,8 @@ async function fetchDateRangeTransactionsForAccount(accountId, accessToken, sinc
                     'Authorization': `Bearer ${accessToken}`
                 },
                 params: {
-                    'page[size]': 100  // Increased page size
+                    'page[size]': 100,  // Increased page size
+                    'filter[since]': since  // Date filter
                 }
             });
 
@@ -255,6 +263,19 @@ async function fetchTransactionsForPastWeek(connection) {
 
         // Calculate the date for past one week
         const OneWeekAgo = new Date(Date.now() - 24 * 7 * 60 * 60 * 1000).toISOString();
+        const syncStart = process.env.UP_BANK_SYNC_START;
+        let maxPullDate;
+
+        // Check if syncStart date is after OneWeekAgo
+        if (typeof syncStart === 'undefined' || syncStart == ""){
+            maxPullDate = OneWeekAgo;
+        } else {
+            if (syncStart > OneWeekAgo){
+                maxPullDate = syncStart;
+            } else {
+                maxPullDate = OneWeekAgo;
+            }
+        }
 
         for (const account of accounts) {
             //console.log(`Fetching transactions for account: ${account.attributes.displayName}`);
@@ -263,7 +284,7 @@ async function fetchTransactionsForPastWeek(connection) {
                 const transactions = await fetchDateRangeTransactionsForAccount(
                     account.id,
                     accessToken,
-                    OneWeekAgo
+                    maxPullDate
                 );
 
                 allTransactions = [...allTransactions, ...transactions];

@@ -54,6 +54,7 @@ ACTUAL_BUDGET_PASSWORD="your_password"
 UP_BANK_ACCESS_TOKEN="your_up_api_key"
 ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
 ACTUAL_BUDGET_ENCRYPTION_PASSWORD="your_E2E_encryption_password"
+UP_BANK_SYNC_START="your_sync_start_date" # Date & time in rfc-3339 format YYYY-MM-DDTHH:MM:SS[Z or +HH:MM]
 ```
 
 ### 5. Run the container to get your accound ID's
