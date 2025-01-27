@@ -60,6 +60,11 @@ async function getBudgetAccounts() {
 async function fetchTransactionsForAccount(accountId, accessToken) {
   let allTransactions = [];
   let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
+  
+  let syncStart = process.env.UP_BANK_SYNC_START;
+  if (typeof syncStart === 'undefined' || syncStart == ""){
+    syncStart = "2015-01-01T00:00:00Z" // Start date that will cover all transactions
+  }
 
   try {
     while (nextPageUrl) {
@@ -68,7 +73,8 @@ async function fetchTransactionsForAccount(accountId, accessToken) {
           'Authorization': `Bearer ${accessToken}`
         },
         params: {
-          'page[size]': 100  // Adjust size as needed
+          'page[size]': 100,  // Adjust size as needed
+          'filter[since]' : syncStart
         }
       });
 
