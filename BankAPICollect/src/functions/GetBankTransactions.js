@@ -36,7 +36,14 @@ async function getBudgetAccounts() {
     });
 
     const budgetId = process.env.ACTUAL_BUDGET_ID;
-    await api.downloadBudget(budgetId);
+    const encryptionPass = process.env.ACTUAL_BUDGET_ENCRYPTION_PASSWORD;
+    if (typeof encryptionPass === 'undefined' || encryptionPass == ""){
+        await api.downloadBudget(budgetId);
+    } else {
+        await api.downloadBudget(budgetId, {
+            password: encryptionPass,
+        });
+    }
 
     // Fetch and print all account IDs from Actual Budget
     const actualAccounts = await api.getAccounts(); // Assuming this method exists in your API
@@ -109,7 +116,16 @@ async function uploadTransactions(accounts) {
         });
 
         const budgetId = process.env.ACTUAL_BUDGET_ID;
-        await api.downloadBudget(budgetId);
+        const encryptionPass = process.env.ACTUAL_BUDGET_ENCRYPTION_PASSWORD;
+        if (typeof encryptionPass === 'undefined' || encryptionPass == ""){
+            await api.downloadBudget(budgetId);
+        } else {
+            await api.downloadBudget(budgetId, {
+                password: encryptionPass,
+            });
+        }
+
+        // await api.downloadBudget(budgetId);
 
         // Fetch the access token and Actual Budget accounts
         const accessToken = process.env.UP_BANK_ACCESS_TOKEN;
@@ -275,7 +291,14 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
         });
 
         const budgetId = process.env.ACTUAL_BUDGET_ID;
-        await api.downloadBudget(budgetId);
+        const encryptionPass = process.env.ACTUAL_BUDGET_ENCRYPTION_PASSWORD;
+        if (typeof encryptionPass === 'undefined' || encryptionPass == ""){
+            await api.downloadBudget(budgetId);
+        } else {
+            await api.downloadBudget(budgetId, {
+                password: encryptionPass,
+            });
+        }
 
         // Fetch Actual Budget accounts
         const actualAccounts = await api.getAccounts();

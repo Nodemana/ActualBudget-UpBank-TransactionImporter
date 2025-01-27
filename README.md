@@ -53,6 +53,7 @@ ACTUAL_BUDGET_ID="your_sync_id"
 ACTUAL_BUDGET_PASSWORD="your_password"
 UP_BANK_ACCESS_TOKEN="your_up_api_key"
 ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
+ACTUAL_BUDGET_ENCRYPTION_PASSWORD="your_E2E_encryption_password"
 ```
 
 ### 5. Run the container to get your accound ID's
