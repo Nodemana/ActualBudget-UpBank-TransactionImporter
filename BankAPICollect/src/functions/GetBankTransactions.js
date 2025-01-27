@@ -62,6 +62,7 @@ async function fetchTransactionsForAccount(accountId, accessToken) {
   let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
   
   let syncStart = process.env.UP_BANK_SYNC_START;
+  // Check if syncStart is set
   if (typeof syncStart === 'undefined' || syncStart == ""){
     syncStart = "2015-01-01T00:00:00Z" // Start date that will cover all transactions
   }
@@ -74,7 +75,7 @@ async function fetchTransactionsForAccount(accountId, accessToken) {
         },
         params: {
           'page[size]': 100,  // Adjust size as needed
-          'filter[since]' : syncStart
+          'filter[since]': syncStart  // Date filter
         }
       });
 
@@ -234,7 +235,7 @@ async function fetchDateRangeTransactionsForAccount(accountId, accessToken, sinc
                 },
                 params: {
                     'page[size]': 100,  // Increased page size
-                    'filter[since]' : since
+                    'filter[since]': since  // Date filter
                 }
             });
 
