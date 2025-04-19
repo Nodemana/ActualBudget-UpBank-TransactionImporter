@@ -183,6 +183,7 @@ async function uploadTransactions(accounts) {
                 date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
                 amount: Math.round(transaction.attributes.amount.value * 100),
                 payee_name: transaction.attributes.description || 'Unknown',
+                imported_id: transaction.id,
               };
 
               if (roundUpAmount !== 0) {
@@ -376,6 +377,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                 date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
                 amount: Math.round(transaction.attributes.amount.value * 100),
                 payee_name: transaction.attributes.description || 'Unknown',
+                imported_id: transaction.id,
               };
 
               if (roundUpAmount !== 0) {
