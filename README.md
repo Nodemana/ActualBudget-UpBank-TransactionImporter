@@ -94,7 +94,7 @@ Now we have all the variables we need, we can now run the docker container in th
 
 `docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
 
-**Done!** Transaction sync hourly. 
+**Done!** Transactions sync hourly. 
 
 ## Need Help? Found a Bug?
 
