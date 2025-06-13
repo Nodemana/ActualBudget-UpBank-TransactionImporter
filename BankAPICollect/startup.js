@@ -1,4 +1,4 @@
-const BankAPILib = require('./BankAPICollect/src/functions/GetBankTransactions');
+const BankAPILib = require('./src/functions/GetBankTransactions');
 
 async function main() {
   try {

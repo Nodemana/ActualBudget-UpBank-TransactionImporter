@@ -1,4 +1,4 @@
-const BankAPILib = require('./BankAPICollect/src/functions/GetBankTransactions');
+const BankAPILib = require('./src/functions/GetBankTransactions');
 require('dotenv').config();
 const cron = require('node-cron');
 

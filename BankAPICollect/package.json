@@ -7,10 +7,11 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@actual-app/api": "^25.5.0",
+    "@actual-app/api": "^25.6.1",
     "@azure/functions": "^4.0.0",
     "axios": "^1.7.8",
-    "dotenv": "^16.4.7",
+    "better-sqlite3": "^11.10.0",
+    "dotenv": "^16.5.0",
     "node-cron": "3.0.3"
   },
   "main": "src/{index.js,functions/*.js}"
