@@ -60,7 +60,7 @@ async function getBudgetAccounts() {
 async function fetchTransactionsForAccount(accountId, accessToken) {
   let allTransactions = [];
   let nextPageUrl = `https://api.up.com.au/api/v1/accounts/${accountId}/transactions`;
-  
+
   let syncStart = process.env.UP_BANK_SYNC_START;
   // Check if syncStart is set
   if (typeof syncStart === 'undefined' || syncStart == ""){
@@ -192,6 +192,7 @@ async function uploadTransactions(accounts) {
                   date: formattedTransaction.date,
                   amount: -Math.round(Math.abs(roundUpAmount) * 100),
                   payee_name: "Round Up Transfer",
+                  imported_id: `${transaction.id}-roundup`,
                 };
                 return [formattedTransaction, roundUpTransaction]; // Return an array
               } else {
