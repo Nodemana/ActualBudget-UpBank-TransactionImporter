@@ -44,7 +44,7 @@ async function update() {
 
 startup();
 
-const scheduleExpr = ProcessingInstruction.env.CRON_SCHEDULE || '0 * * * *'; // Default to every hour if not set
+const scheduleExpr = process.env.CRON_SCHEDULE || '0 * * * *'; // Default to every hour if not set
   if (!cron.validate(scheduleExpr)) {
     console.error('Invalid CRON_SCHEDULE expression. Please check your environment variable.');
     process.exit(1);
