@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:20.19.2
+FROM --platform=${BUILDPLATFORM} node:20.19.2
 
 RUN apt-get update && apt-get install -y \
   python3 \
