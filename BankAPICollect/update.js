@@ -44,7 +44,12 @@ async function update() {
 
 startup();
 
-cron.schedule('0 * * * *', async () => {
+const scheduleExpr = process.env.CRON_SCHEDULE || '0 * * * *'; // Default to every hour if not set
+  if (!cron.validate(scheduleExpr)) {
+    console.error('Invalid CRON_SCHEDULE expression. Please check your environment variable.');
+    process.exit(1);
+  }
+  cron.schedule(scheduleExpr, async () => {
     await update();
-});
-console.log('Cron job scheduled. Waiting for next execution.');
+  });
+  console.log(`Cron job scheduled with expression: ${scheduleExpr}. Waiting for next execution.`);
