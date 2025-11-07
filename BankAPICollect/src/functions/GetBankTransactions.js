@@ -248,7 +248,7 @@ async function uploadTransactions(accounts) {
               if (transaction.attributes.cashback !== null) {
                 const cashBackTransaction = {
                   account: actualBudgetAccountId,
-                  date: new Date (new Date(transaction.attributes.createdAt)-(new Date(transaction.attributes.createdAt).getTimezoneOffset()*60*1000)).toISOString().split('T')[0],
+                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
                   amount: Math.round(transaction.attributes.cashback.amount.value * 100),
                   payee_name: transaction.attributes.cashback.description || 'Unknown',
                   imported_id: `${transaction.id}-cashback`,
@@ -506,7 +506,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
               if (transaction.attributes.cashback !== null) {
                 const cashBackTransaction = {
                   account: actualBudgetAccountId,
-                  date: new Date (new Date(transaction.attributes.createdAt)-(new Date(transaction.attributes.createdAt).getTimezoneOffset()*60*1000)).toISOString().split('T')[0],
+                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
                   amount: Math.round(transaction.attributes.cashback.amount.value * 100),
                   payee_name: transaction.attributes.cashback.description || 'Unknown',
                   imported_id: `${transaction.id}-cashback`,
