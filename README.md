@@ -55,9 +55,11 @@ ACTUAL_BUDGET_PASSWORD="your_password"
 UP_BANK_ACCESS_TOKEN="your_up_api_key"
 ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
 ACTUAL_BUDGET_ENCRYPTION_PASSWORD="your_E2E_encryption_password"
-CRON_SCHEDULE="0 * * * *" #schedule for updates i.e. "0 * * * *" will update transactions on minute 0 of every hour (hourly). "0 * 1/1 * *" will update transactions at minute 0 of every day (daily).
+CRON_SCHEDULE="0 * * * *" #schedule for updates i.e. "0 * * * *" will update transactions on minute 0 of every hour (hourly). "5 0 * * *" will update transactions daily at 12:05am.
 UP_BANK_SYNC_START="your_sync_start_date" # Date & time in rfc-3339 format YYYY-MM-DDTHH:MM:SS[Z or +HH:MM]
 ```
+
+ℹ️ **Tip:** If you're not familiar with cron syntax, check out [cronguru](https://crontab.guru).
 
 ### 5. Run the container to get your accound ID's
 Now we need to run the docker image so that we can extract our account id's.
@@ -91,9 +93,35 @@ Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up
 This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on. You can add as many mappings as you'd like.
 
 ### 6. Run the final container
-Now we have all the variables we need, we can now run the docker container in the background:
+Now we have all the variables we need, we can now run the docker container in the background. 
 
-`docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
+_You can either use docker run or compose._
+
+  Docker run:
+
+  `docker run -d --env-file .env --network="host" nodemana/actualbudgetupimporter:latest`
+
+  Docker compose:
+
+  - Create the compose file 'docker-compose.yml' in your working directory.
+  - Update the example compose file below as applicable.
+
+```# docker-compose.yml
+services:
+  actualbudgetupimporter:
+    image: nodemana/actualbudgetupimporter:latest
+    container_name: actualbudget-up-sync
+    env_file: ./.env # Path to your environment variables dotenv file (.env). Default './.env' if your dotenv file is in the same directory as your composefile.
+    #environment: # Enable if you're defining any environemnt variables in your compose (rather than via dotenv). Do not enable on its own - if enabled, you must pass one or more variables (i.e. '- TZ=Etc/UTC')
+      #- TZ=Etc/UTC # If you're defining a timezone for the container here, rather than in your dotenv file, enable this and the line above 'environemnt:'. This is optional.
+    #network_mode: host # If you are running actual budget server on your local machine then you will need to pass 'network_mode: host', so enable this.
+    #restart: unless-stopped # Restart policy. Default flag is `no`. More info here: https://docs.docker.com/engine/containers/start-containers-automatically/#use-a-restart-policy
+```
+
+ℹ️ **Tip:** Commands in the example compose file that start with '#' are commented out and not enabled. To enable them, remove the proceeding '#' (i.e. `#network_mode: host'` is disabled, `network_mode: host` in enabled.)
+
+- Run your compose file.
+`docker compose up -d`
 
 **Done!** Transactions sync hourly. 
 
