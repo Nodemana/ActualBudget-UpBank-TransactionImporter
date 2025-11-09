@@ -219,3 +219,68 @@ This setup will run the script every day at 3:00 AM.
 
 </details>
 
+## Synology Docker Compose Instructions
+
+If you setup you Synology using the [Dr_Frankenstein's Synology Docker Guides](https://drfrankenstein.co.uk/) then the following docker compose should work for you. The below uses only docker compose, there is no .env file. Assumed pre-requisites are:
+- You are using Actual with Tailscale
+- You are running GluTUN on your synology
+
+```yml
+services:
+  ts-actual-server:
+    image: tailscale/tailscale:latest
+    ports:
+      # This line makes Actual available at port 5006 of the device you run the server on,
+      # i.e. http://localhost:5006. You can change the first number to change the port, if you want.
+      - '5006:5006'
+    container_name: ts-actualserver
+    hostname: actual-server
+    environment:
+      - PUID=[Synology User Id of user that has access to "volumes" below]
+      - PGID=[corresponding Group Id for the above synology user]
+      - TZ=[Europe/London or your relevant timezone]
+      - TS_AUTHKEY=[Tailscale auth key. Looks like "tskey-auth-xxxxxxxxxxxx"]
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_SERVE_CONFIG=/config/serve-config.json
+    volumes:
+      - /volume1/docker/actualbudget/state:/var/lib/tailscale # Tailscale state directory
+      - /volume1/docker/actualbudget/config:/config # Tailscale config directory
+    devices:
+      - /dev/net/tun:/dev/net/tun # TUN device for Tailscale. Assumes you are running GluTUN on your synology
+    cap_add:
+      - net_admin
+    restart: always
+  
+  actual_server:
+    image: docker.io/actualbudget/actual-server:latest
+    container_name: actual-budget
+    network_mode: service:ts-actual-server
+    depends_on:
+      - ts-actual-server
+    volumes:
+      # Change './actual-data' below to the path to the folder you want Actual to store its data in on your server.
+      # '/data' is the path Actual will look for its files in by default, so leave that as-is.
+      - /volume1/data/actualbudget:/data
+    healthcheck:
+      # Enable health check for the instance
+      test: ['CMD-SHELL', 'node src/scripts/health-check.js']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: always
+
+  actualbudgetupimporter:
+    image: nodemana/actualbudgetupimporter:latest
+    container_name: actual-budget-up-sync-ben
+    environment:
+      - ACTUAL_BUDGET_ID=[actual budget sync Id]
+      - ACTUAL_BUDGET_PASSWORD=[actual budget password]
+      - UP_BANK_ACCESS_TOKEN=[your up bank access token]
+      - ACTUAL_BUDGET_SERVER_URL=http://192.168.X.XXX:5006 # replace with your actual server URL or IP
+      - UP_BANK_SYNC_START=2025-09-01T00:00:00+00:00
+      - UP_ACCOUNT_MAPPING={"Up bank account id 1":"Actual Budget account id 1"} # left is up id, right is actual budget id
+    network_mode: service:ts-actual-server
+    restart: unless-stopped
+    ```
