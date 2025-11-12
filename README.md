@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/nodemana/actualbudgetupimporter)](https://hub.docker.com/r/nodemana/actualbudgetupimporter)
 [![Open Issues](https://img.shields.io/github/issues/Nodemana/ActualBudget-UpBank-TransactionImporter)](https://github.com/Nodemana/ActualBudget-UpBank-TransactionImporter/issues)
 
-**Automatically sync your Up Bank transactions with Actual Budget** – no manual CSV exports needed!  
+**Automatically sync your Up Bank transactions with Actual Budget** – no manual CSV exports needed!
 
 🚀 **Key Features**:
 - **One-Time Setup**: Map accounts once, sync forever.
@@ -79,7 +79,7 @@ Record these in your .env files like so:
 # left is up id, right is actual budget id
 UP_ACCOUNT_MAPPING={"up_account1": "actual_budget_account1","up_account2": "actual_budget_account1"}
 ```
-⚠️ **Security Note**:  
+⚠️ **Security Note**:
 Never commit your `.env` file or share API keys. Up Bank tokens have full read access to your transactions!
 
 Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up Bank accounts to the correct accounts in Actual Budget. You need to replace the placeholder IDs with your actual IDs. For example:
@@ -93,7 +93,7 @@ Explanation of `UP_ACCOUNT_MAPPING`: This section is crucial for mapping your Up
 This maps the Up Bank account with ID `12345678-abcd-efgh-ijkl-1234567890ab` to the Actual Budget account with ID `98765432-zyxw-vuts-rqpo-0987654321dc`, and so on. You can add as many mappings as you'd like.
 
 ### 6. Run the final container
-Now we have all the variables we need, we can now run the docker container in the background. 
+Now we have all the variables we need, we can now run the docker container in the background.
 
 _You can either use docker run or compose._
 
@@ -123,7 +123,7 @@ services:
 - Run your compose file.
 `docker compose up -d`
 
-**Done!** Transactions sync hourly. 
+**Done!** Transactions sync hourly.
 
 ## Need Help? Found a Bug?
 
@@ -159,7 +159,7 @@ First time contributing? Check out [good first issues](https://github.com/Nodema
     `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`
 
     Note: Replace v0.39.3 with the latest nvm version number if you prefer. Check the official nvm GitHub repository for the latest version: https://github.com/nvm-sh/nvm
-  - Close and reopen your terminal window for the changes to take effect. 
+  - Close and reopen your terminal window for the changes to take effect.
 
 #### 3. Verify nvm installation:
 - Run the following command to check if nvm is installed correctly:
@@ -249,7 +249,7 @@ This setup will run the script every day at 3:00 AM.
 
 ## Synology Docker Compose Instructions
 
-If you setup you Synology using the [Dr_Frankenstein's Synology Docker Guides](https://drfrankenstein.co.uk/) then the following docker compose should work for you. The below uses only docker compose, there is no .env file. Assumed pre-requisites are:
+If you setup your Synology using the [Dr_Frankenstein's Synology Docker Guides](https://drfrankenstein.co.uk/) then the following docker compose should work for you. The below uses only docker compose, there is no .env file. Assumed pre-requisites are:
 - You are using Actual with Tailscale
 - You are running GluTUN on your synology
 
@@ -279,7 +279,7 @@ services:
     cap_add:
       - net_admin
     restart: always
-  
+
   actual_server:
     image: docker.io/actualbudget/actual-server:latest
     container_name: actual-budget
