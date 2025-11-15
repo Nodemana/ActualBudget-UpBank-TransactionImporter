@@ -244,6 +244,19 @@ async function uploadTransactions(accounts) {
                 cleared: transaction.attributes.status === "SETTLED",
               };
 
+              // Checks if Perk-up or happy hour was won and adds cash back transaction
+              if (transaction.attributes.cashback !== null) {
+                const cashBackTransaction = {
+                  account: actualBudgetAccountId,
+                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                  amount: Math.round(transaction.attributes.cashback.amount.value * 100),
+                  payee_name: transaction.attributes.cashback.description || 'Unknown',
+                  imported_id: `${transaction.id}-cashback`,
+                  cleared: transaction.attributes.status === "SETTLED",
+                };
+                return [formattedTransaction, cashBackTransaction];
+              }
+
               return [formattedTransaction]; // Return an array with a single item
             });
 
@@ -488,6 +501,19 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                 imported_id: transaction.id,
                 cleared: transaction.attributes.status === "SETTLED",
               };
+
+              // Checks if Perk-up or happy hour was won and adds cash back transaction
+              if (transaction.attributes.cashback !== null) {
+                const cashBackTransaction = {
+                  account: actualBudgetAccountId,
+                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                  amount: Math.round(transaction.attributes.cashback.amount.value * 100),
+                  payee_name: transaction.attributes.cashback.description || 'Unknown',
+                  imported_id: `${transaction.id}-cashback`,
+                  cleared: transaction.attributes.status === "SETTLED",
+                };
+                return [formattedTransaction, cashBackTransaction];
+              }
 
               return [formattedTransaction]; // Return an array with a single item
             });
