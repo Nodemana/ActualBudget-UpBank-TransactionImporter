@@ -56,6 +56,7 @@ UP_BANK_ACCESS_TOKEN="your_up_api_key"
 ACTUAL_BUDGET_SERVER_URL="http://localhost:5006"  # Change if hosted
 ACTUAL_BUDGET_ENCRYPTION_PASSWORD="your_E2E_encryption_password"
 CRON_SCHEDULE="0 * * * *" #schedule for updates i.e. "0 * * * *" will update transactions on minute 0 of every hour (hourly). "5 0 * * *" will update transactions daily at 12:05am.
+UTC_TIMEZONE_OFFSET=0 #Default is 0, add your local UTC timesone offset like +10 or -10 etc.
 UP_BANK_SYNC_START="your_sync_start_date" # Date & time in rfc-3339 format YYYY-MM-DDTHH:MM:SS[Z or +HH:MM]
 ```
 
