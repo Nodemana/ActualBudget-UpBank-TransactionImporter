@@ -11,6 +11,7 @@ const api = require('@actual-app/api');
 
 async function AuthenticateUp() {
     const accessToken = process.env.UP_BANK_ACCESS_TOKEN;
+
     try {
         const accountsResponse = await axios.get('https://api.up.com.au/api/v1/accounts', {
             headers: {
@@ -51,6 +52,12 @@ async function getBudgetAccounts() {
                     actualAccounts.map(a => `${a.name} (ID: ${a.id})`).join(', '));
 }
 
+function formatDate(transaction) {
+    const timezone_offset = parseInt(process.env.UTC_TIMEZONE_OFFSET || 0);
+    const date_object = new Date(transaction.settledAt || transaction.createdAt);
+    date_object.setHours(date_object.getHours() + timezone_offset);
+    return date_object.toISOString().split('T');
+}
 
 //=============================================================================
 //                          All Transactions For Accounts
@@ -194,14 +201,14 @@ async function uploadTransactions(accounts) {
                     if (targetPayee) {
                         const formattedTransaction = {
                             account: actualBudgetAccountId,
-                            date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                            date: formatDate(transaction.attributes),
                             amount: Math.round(transaction.attributes.amount.value * 100),
                             payee: targetPayee.id,
                             payee_name: transaction.attributes.description || 'Unknown',
                             imported_id: transaction.id,
                             cleared: transaction.attributes.status === "SETTLED",
                         };
-                        
+
                         // Additional Checks for special transfer types (roundup & forward / covers)
                         // Add additional info such as notes to these
                         let transferDescription = transaction.attributes.description;
@@ -211,7 +218,7 @@ async function uploadTransactions(accounts) {
                                 formattedTransaction.imported_id = `${transaction.id}-roundup`;
                                 formattedTransaction.payee_name = 'Round Up'
                             }
-                            
+
                             if (transferDescription.startsWith('Cover')) {
                                 formattedTransaction.notes = transferDescription.replace('from', '-');
                             }
@@ -237,18 +244,19 @@ async function uploadTransactions(accounts) {
 
               const formattedTransaction = {
                 account: actualBudgetAccountId,
-                date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                date: formatDate(transaction.attributes)[0],
                 amount: Math.round(transaction.attributes.amount.value * 100),
                 payee_name: transaction.attributes.description || 'Unknown',
                 imported_id: transaction.id,
                 cleared: transaction.attributes.status === "SETTLED",
               };
 
+
               // Checks if Perk-up or happy hour was won and adds cash back transaction
               if (transaction.attributes.cashback !== null) {
                 const cashBackTransaction = {
                   account: actualBudgetAccountId,
-                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                  date: formatDate(transaction.attributes)[0],
                   amount: Math.round(transaction.attributes.cashback.amount.value * 100),
                   payee_name: transaction.attributes.cashback.description || 'Unknown',
                   imported_id: `${transaction.id}-cashback`,
@@ -264,7 +272,7 @@ async function uploadTransactions(accounts) {
             if (formattedTransactions.length > 0) {
                 try {
                     const result = await api.importTransactions(actualBudgetAccountId, formattedTransactions);
-                    console.log(`Uploaded ${formattedTransactions.length} transactions for ${upAccountName}`);
+                    //console.log(`Uploaded ${formattedTransactions.length} transactions for ${upAccountName}`);
                 } catch (importError) {
                     console.error(`Error importing transactions for ${upAccountName}:`, importError);
                 }
@@ -452,14 +460,14 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                     if (targetPayee) {
                         const formattedTransaction = {
                             account: actualBudgetAccountId,
-                            date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                            date: formatDate(transaction.attributes),
                             amount: Math.round(transaction.attributes.amount.value * 100),
                             payee: targetPayee.id,
                             payee_name: transaction.attributes.description || 'Unknown',
                             imported_id: transaction.id,
                             cleared: transaction.attributes.status === "SETTLED",
                         };
-                        
+
                         // Additional Checks for special transfer types (roundup & forward / covers)
                         // Add additional info such as notes to these
                         let transferDescription = transaction.attributes.description;
@@ -469,7 +477,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                                 formattedTransaction.imported_id = `${transaction.id}-roundup`;
                                 formattedTransaction.payee_name = 'Round Up'
                             }
-                            
+
                             if (transferDescription.startsWith('Cover')) {
                                 formattedTransaction.notes = transferDescription.replace('from', '-');
                             }
@@ -495,7 +503,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
 
               const formattedTransaction = {
                 account: actualBudgetAccountId,
-                date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                date: formatDate(transaction.attributes),
                 amount: Math.round(transaction.attributes.amount.value * 100),
                 payee_name: transaction.attributes.description || 'Unknown',
                 imported_id: transaction.id,
@@ -506,7 +514,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
               if (transaction.attributes.cashback !== null) {
                 const cashBackTransaction = {
                   account: actualBudgetAccountId,
-                  date: new Date(transaction.attributes.settledAt || transaction.attributes.createdAt).toISOString().split('T')[0],
+                  date: formatDate(transaction.attributes),
                   amount: Math.round(transaction.attributes.cashback.amount.value * 100),
                   payee_name: transaction.attributes.cashback.description || 'Unknown',
                   imported_id: `${transaction.id}-cashback`,
