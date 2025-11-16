@@ -201,7 +201,7 @@ async function uploadTransactions(accounts) {
                     if (targetPayee) {
                         const formattedTransaction = {
                             account: actualBudgetAccountId,
-                            date: formatDate(transaction.attributes),
+                            date: formatDate(transaction.attributes)[0],
                             amount: Math.round(transaction.attributes.amount.value * 100),
                             payee: targetPayee.id,
                             payee_name: transaction.attributes.description || 'Unknown',
@@ -460,7 +460,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
                     if (targetPayee) {
                         const formattedTransaction = {
                             account: actualBudgetAccountId,
-                            date: formatDate(transaction.attributes),
+                            date: formatDate(transaction.attributes)[0],
                             amount: Math.round(transaction.attributes.amount.value * 100),
                             payee: targetPayee.id,
                             payee_name: transaction.attributes.description || 'Unknown',
@@ -503,7 +503,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
 
               const formattedTransaction = {
                 account: actualBudgetAccountId,
-                date: formatDate(transaction.attributes),
+                date: formatDate(transaction.attributes)[0],
                 amount: Math.round(transaction.attributes.amount.value * 100),
                 payee_name: transaction.attributes.description || 'Unknown',
                 imported_id: transaction.id,
@@ -514,7 +514,7 @@ async function uploadWeeklyTransactions(weeklyTransactions) {
               if (transaction.attributes.cashback !== null) {
                 const cashBackTransaction = {
                   account: actualBudgetAccountId,
-                  date: formatDate(transaction.attributes),
+                  date: formatDate(transaction.attributes)[0],
                   amount: Math.round(transaction.attributes.cashback.amount.value * 100),
                   payee_name: transaction.attributes.cashback.description || 'Unknown',
                   imported_id: `${transaction.id}-cashback`,
