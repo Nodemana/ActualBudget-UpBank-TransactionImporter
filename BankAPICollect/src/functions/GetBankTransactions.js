@@ -11,7 +11,6 @@ const api = require('@actual-app/api');
 
 async function AuthenticateUp() {
     const accessToken = process.env.UP_BANK_ACCESS_TOKEN;
-
     try {
         const accountsResponse = await axios.get('https://api.up.com.au/api/v1/accounts', {
             headers: {
