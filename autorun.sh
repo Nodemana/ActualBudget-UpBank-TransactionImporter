@@ -18,4 +18,4 @@ export UP_BANK_ACCESS_TOKEN=
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-nvm use 18.14.1 && node ~/Projects/budget-app/startup.js  # CHANGE THIS PATH TO SUIT YOUR startup.js
+nvm use 22.22.2 && node ~/Projects/budget-app/startup.js  # CHANGE THIS PATH TO SUIT YOUR startup.js

@@ -167,9 +167,9 @@ First time contributing? Check out [good first issues](https://github.com/Nodema
     `nvm -v`
 This should print the installed nvm version.
 
-#### 4. Install Node.js version 18.14.1:
-- Use the following command to install Node.js version 18.14.1:
-  `nvm install 18.14.1`
+#### 4. Install Node.js version 22.22.2:
+- Use the following command to install Node.js version 22.22.2:
+  `nvm install 22.22.2`
 
 #### 5. Verify Node.js installation:
 - Run the following commands to verify the installed Node.js version and npm version:
@@ -177,7 +177,7 @@ This should print the installed nvm version.
 node -v
 npm -v
 ```
-These should print v18.14.1 for Node.js and the corresponding npm version.
+These should print v22.22.2 for Node.js and the corresponding npm version.
 
 #### 6. Install Project Dependencies:
 Navigate to the cloned repository directory using the cd command in your terminal. Then, run the following command to install the project's dependencies:
